@@ -2,7 +2,7 @@
 
 ;; Version: 3.0
 
-;; Package-Requires: ((emacs "25.1") (lsp-mode "6.0") (markdown-mode "2.3") (dash "2.18.0") (f "0.20.0") (ht "2.0") (request "0.3.0") (treemacs "2.5") (dap-mode "0.5"))
+;; Package-Requires: ((emacs "25.1") (lsp-mode "6.0") (markdown-mode "2.3") (dash "2.18.0") (f "0.20.0") (ht "2.0") (request "0.3.0"))
 ;; Keywords: languague, tools
 ;; URL: https://github.com/emacs-lsp/lsp-java
 
@@ -27,7 +27,7 @@
 (require 'cc-mode)
 (require 'lsp-mode)
 (require 'markdown-mode)
-(require 'lsp-treemacs)
+
 (require 'dash)
 (require 'ht)
 (require 'f)
@@ -381,7 +381,7 @@ example 'java.awt.*' will hide all types from the awt packages."
   :type '(lsp-repeatable-vector string)
   :group 'lsp-java)
 
-(declare-function dap-debug "ext:dap-mode")
+
 (declare-function projectile-project-p "ext:projectile")
 (declare-function projectile-project-root "ext:projectile")
 (declare-function helm-make-source "ext:helm-source")
@@ -549,7 +549,7 @@ the folder in Hybrid mode for the first time."
 projects import is skipped on startup."
   :type 'boolean)
 
-(defvar lsp-java--download-root "https://raw.githubusercontent.com/emacs-lsp/lsp-java/master/install/")
+(defvar lsp-java--download-root (expand-file-name "install/" (file-name-directory load-file-name)))
 
 (defun lsp-java--json-bool (param)
   "Return a PARAM for setting parsable by json.el for booleans."
@@ -1531,26 +1531,11 @@ current symbol."
 (defvar lsp-lens-backends)
 (declare-function lsp-lens-refresh "lsp-lens" (buffer-modified? &optional buffer))
 ;;;###autoload
-(define-minor-mode lsp-java-lens-mode
-  "Toggle run/debug overlays."
-  :group 'lsp-java
-  :global nil
-  :init-value nil
-  :lighter nil
-  (cond
-   (lsp-java-lens-mode
-    (require 'lsp-lens)
-    (setq-local lsp-lens-backends (cl-pushnew #'lsp-java-lens-backend lsp-lens-backends))
-    (lsp-lens-refresh t))
-   (t (setq-local lsp-lens-backends (delete #'lsp-java-lens-backend lsp-lens-backends)))))
+(defconst lsp-java-lens-mode nil)
+(defalias 'lsp-java-lens-mode 'ignore)
 
-(defun lsp-java--start-main-class (lens no-debug?)
-  (-let [(&java:MainClassInfo :main-class :project-name) lens]
-    (require 'dap-java)
-    (dap-debug (list :type "java"
-                     :mainClass main-class
-                     :projectName project-name
-                     :noDebug no-debug?))))
+(defun lsp-java--start-main-class (_lens _no-debug?)
+  (user-error "[eemacs] feature removed"))
 
 (defun lsp-java-lens-backend (_modified? callback)
   (when (lsp--find-workspaces-for "workspace/executeCommand")
@@ -1585,69 +1570,6 @@ current symbol."
                 lsp--cur-version))
      :mode 'tick)))
 
-
-
-(defconst lsp-java--hierarchy-sub 0)
-(defconst lsp-java--hierarchy-super 1)
-(defconst lsp-java--hierarchy-both 2)
-
-(defun lsp-java--type-hierarchy-render-nodes (nodes direction load-direction)
-  (-map (-lambda ((it &as &TypeHierarchyItem :name :kind :uri :selection-range (&Range :start)))
-          (list :label (concat name
-                               (cond
-                                ((eq lsp-java--hierarchy-sub direction) (propertize " ↓" 'face 'shadow))
-                                ((eq lsp-java--hierarchy-super direction) (propertize " ↑" 'face 'shadow))))
-                :key name
-                :icon (lsp-treemacs-symbol-kind->icon kind)
-                :children-async (-partial #'lsp-java--type-hierarchy-render it load-direction)
-                :ret-action #'lsp-treemacs-go-to
-                :position start
-                :uri uri
-                :actions `(["Go to" lsp-treemacs-go-to])))
-        nodes))
-
-(defun lsp-java--type-hierarchy-render (item direction _ callback)
-  (lsp-request-async
-   "workspace/executeCommand"
-   (list :command "java.navigate.resolveTypeHierarchy"
-         :arguments (vector (lsp--json-serialize item)
-                            (number-to-string direction)
-                            "1"))
-   (-lambda ((&TypeHierarchyItem :children? :parents?))
-     (funcall callback (nconc (lsp-java--type-hierarchy-render-nodes
-                               children? lsp-java--hierarchy-sub direction)
-                              (lsp-java--type-hierarchy-render-nodes
-                               parents? lsp-java--hierarchy-super direction))))))
-
-(defun lsp-java-type-hierarchy (direction)
-  "Show the type hierarchy for the symbol at point.
-With prefix 0 show sub-types.
-With prefix 1 show super-types.
-With prefix 2 show both."
-  (interactive "P")
-  (setq direction (or direction lsp-java--hierarchy-both))
-  (let ((workspaces (lsp-workspaces))
-        (result
-         (lsp-workspace-command-execute
-          "java.navigate.openTypeHierarchy"
-          (vector (lsp--json-serialize (lsp--text-document-position-params))
-                  (number-to-string direction)
-                  "0"))))
-    (if result
-        (pop-to-buffer
-         (lsp-treemacs-render
-          (lsp-java--type-hierarchy-render-nodes (vector result) nil direction)
-          (concat (cond
-                   ((eq lsp-java--hierarchy-sub direction) "Sub")
-                   ((eq lsp-java--hierarchy-super direction) "Super")
-                   ((eq lsp-java--hierarchy-both direction) "Sub/Super"))
-                  " Type Hierarchy")
-          nil
-          "*lsp-java-type-hierarchy*"
-          nil
-          t))
-      (user-error "No class under point."))
-    (setq lsp--buffer-workspaces workspaces)))
 
 (provide 'lsp-java)
 ;;; lsp-java.el ends here
