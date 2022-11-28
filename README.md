@@ -1,3 +1,6 @@
+> this is the simple version modified by [entropy-emacs](https://www.github.com/c0001/entropy-emacs) which
+> removed `dap-mode` and `treemacs` integration
+
 [![MELPA](https://melpa.org/packages/lsp-java-badge.svg)](https://melpa.org/#/lsp-java)
 [![MELPA Stable](https://stable.melpa.org/packages/lsp-java-badge.svg)](https://stable.melpa.org/#/lsp-java)
 [![Build Status](https://github.com/emacs-lsp/lsp-java/workflows/CI/badge.svg?branch=master)](https://github.com/emacs-lsp/lsp-java/actions)

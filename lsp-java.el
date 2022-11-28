@@ -47,7 +47,7 @@ The slash is expected at the end."
   :risky t
   :type 'directory)
 
-(defcustom lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz"
+(defcustom lsp-java-jdt-download-url "https://sourceforge.net/projects/entropy-emacs-cabinet/files/LSP/lsp-java/lsp-java-v3.1_jdtls_release/jdt-language-server-1.12.0-202206011637.tar.gz"
   "JDT JS download url.
 Use http://download.eclipse.org/che/che-ls-jdt/snapshots/che-jdt-language-server-latest.tar.gz if you want to use Eclipse Che JDT LS."
   :group 'lsp-java
@@ -549,7 +549,10 @@ the folder in Hybrid mode for the first time."
 projects import is skipped on startup."
   :type 'boolean)
 
-(defvar lsp-java--download-root (expand-file-name "install/" (file-name-directory load-file-name)))
+(defvar lsp-java--download-root
+  (concat "file://"
+          (expand-file-name "install/"
+                            (file-truename (file-name-directory load-file-name)))))
 
 (defun lsp-java--json-bool (param)
   "Return a PARAM for setting parsable by json.el for booleans."

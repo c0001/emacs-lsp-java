@@ -36,7 +36,7 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <url>https://github.com/emacs-lsp/lsp-java/releases/download/2.2/Pivotal.vscode-spring-boot-1.6.0.vsix</url>
+              <url>https://sourceforge.net/projects/entropy-emacs-cabinet/files/LSP/lsp-java/lsp-java-v3.1_jdtls_release/Pivotal.vscode-spring-boot-1.6.0.vsix</url>
               <outputFileName>vscode-extension.zip</outputFileName>
               <outputDirectory>${project.build.directory}</outputDirectory>
             </configuration>
@@ -48,7 +48,7 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <url>https://github.com/emacs-lsp/lsp-java/releases/download/2.2/vscjava.vscode-java-dependency-0.5.1.vsix</url>
+              <url>https://sourceforge.net/projects/entropy-emacs-cabinet/files/LSP/lsp-java/lsp-java-v3.1_jdtls_release/vscjava.vscode-java-dependency-0.5.1.vsix</url>
               <outputFileName>java-dependency.zip</outputFileName>
               <outputDirectory>${project.build.directory}</outputDirectory>
             </configuration>
@@ -60,7 +60,7 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <url>https://github.com/emacs-lsp/lsp-java/releases/download/2.2/dgileadi.java-decompiler-0.0.2.vsix</url>
+              <url>https://sourceforge.net/projects/entropy-emacs-cabinet/files/LSP/lsp-java/lsp-java-v3.1_jdtls_release/dgileadi.java-decompiler-0.0.2.vsix</url>
               <outputFileName>java-decompiler.zip</outputFileName>
               <outputDirectory>${project.build.directory}</outputDirectory>
             </configuration>
@@ -72,7 +72,7 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-                <url>https://github.com/microsoft/vscode-java-test/releases/download/0.28.0/vscjava.vscode-java-test-0.28.0.vsix</url>
+                <url>https://sourceforge.net/projects/entropy-emacs-cabinet/files/LSP/lsp-java/lsp-java-v3.1_jdtls_release/vscjava.vscode-java-test-0.28.0.vsix</url>
               <outputFileName>vscode-java-test.zip</outputFileName>
               <outputDirectory>${project.build.directory}</outputDirectory>
             </configuration>
